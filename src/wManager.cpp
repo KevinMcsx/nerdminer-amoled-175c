@@ -1,4 +1,4 @@
-#define ESP_DRD_USE_SPIFFS true
+﻿#define ESP_DRD_USE_SPIFFS true
 
 // Include Libraries
 //#include ".h"
@@ -35,6 +35,10 @@ nvMemory nvMem;
 extern SDCard SDCrd;
 
 String readCustomAPName() {
+#ifdef WAVESHARE_AMOLED_175C
+    // Legacy webflasher offset is inside app0 in this board layout.
+    return "";
+#else
     Serial.println("DEBUG: Attempting to read custom AP name from flash at 0x3F0000...");
     
     // Leer directamente desde flash
@@ -57,7 +61,7 @@ String readCustomAPName() {
     
     if (data.startsWith("WEBFLASHER_CONFIG:")) {
         Serial.println("DEBUG: Found WEBFLASHER_CONFIG marker");
-        String jsonPart = data.substring(18); // Después del marcador "WEBFLASHER_CONFIG:"
+        String jsonPart = data.substring(18); // DespuÃ©s del marcador "WEBFLASHER_CONFIG:"
         
         Serial.printf("DEBUG: JSON part: '%s'\n", jsonPart.c_str());
         
@@ -72,7 +76,7 @@ String readCustomAPName() {
                 customAP.trim();
                 
                 if (customAP.length() > 0 && customAP.length() < 32) {
-                    Serial.printf("✅ Custom AP name from webflasher: %s\n", customAP.c_str());
+                    Serial.printf("âœ… Custom AP name from webflasher: %s\n", customAP.c_str());
                     return customAP;
                 } else {
                     Serial.printf("DEBUG: AP name invalid length: %d\n", customAP.length());
@@ -89,6 +93,7 @@ String readCustomAPName() {
     
     Serial.println("DEBUG: Using default AP name");
     return "";
+#endif
 }
 
 void saveConfigCallback()
@@ -233,7 +238,7 @@ void init_WifiManager()
   }
   WiFiManagerParameter save_stats_to_nvs("SaveStatsToNVS", "Save mining statistics to flash memory.", "T", 2, checkboxParams, WFM_LABEL_AFTER);
   // Text box (String) - 80 characters maximum
-  WiFiManagerParameter password_text_box("Poolpassword - Optional", "Pool password", Settings.PoolPassword, 80);
+  WiFiManagerParameter password_text_box("Poolpassword", "Pool password", Settings.PoolPassword, 80);
 
   // Add all defined parameters
   wm.addParameter(&pool_text_box);
@@ -295,7 +300,7 @@ void init_WifiManager()
     }
     else
     {
-        //Tratamos de conectar con la configuración inicial ya almacenada
+        //Tratamos de conectar con la configuraciÃ³n inicial ya almacenada
         mMonitor.NerdStatus = NM_Connecting;
         // disable captive portal redirection
         wm.setCaptivePortalEnable(true); 
@@ -443,3 +448,4 @@ void wifiManagerProcess() {
         oldStatus = newStatus;
     }
 }
+

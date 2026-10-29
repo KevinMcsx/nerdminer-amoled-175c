@@ -88,7 +88,11 @@ void setup()
   #if defined(PIN_BUTTON_1) && !defined(PIN_BUTTON_2) //One button device
     button1.setPressMs(5*SECOND_MS);
     button1.attachClick(switchToNextScreen);
+#ifdef WAVESHARE_AMOLED_175C
+    button1.attachDoubleClick(alternateScreenState);
+#else
     button1.attachDoubleClick(alternateScreenRotation);
+#endif
     button1.attachLongPressStart(reset_configuration);
     button1.attachMultiClick(alternateScreenState);
   #endif

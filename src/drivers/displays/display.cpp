@@ -1,4 +1,8 @@
 #include "display.h"
+#ifdef WAVESHARE_175C_DISPLAY
+extern DisplayDriver waveshare175cDriver;
+DisplayDriver *currentDisplayDriver = &waveshare175cDriver;
+#endif
 
 #ifdef NO_DISPLAY
 DisplayDriver *currentDisplayDriver = &noDisplayDriver;
